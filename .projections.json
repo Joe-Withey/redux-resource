@@ -1,0 +1,22 @@
+{
+  "*.spec.jsx": {
+    "alternate": "{}.jsx",
+    "type": "test",
+    "dispatch": "npx jest -- {file}"
+  },
+  "*.spec.js": {
+    "alternate": "{}.js",
+    "type": "test",
+    "dispatch": "npx jest -- {file}"
+  },
+  "*.jsx": {
+    "alternate": "{}.spec.jsx",
+    "type": "source"
+  },
+  "*.js": {
+    "alternate": "{}.spec.js",
+    "type": "source"
+  }
+}
+
+
