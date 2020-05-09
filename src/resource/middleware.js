@@ -1,5 +1,6 @@
 import { mergeDeepRight, evolve } from 'ramda'
 import { middleware as initialiseApiMiddleware, defaultConfig as baseDefaultConfig } from '../middleware'
+import { HttpTimeoutError } from '../timeout'
 import { ApiResource } from './actions'
 import actionTypes from './action-types'
 import { tapThunk } from './util'
@@ -10,7 +11,7 @@ const defaultConfig = {
 }
 
 function handleRequest(action) {
-  return dispatch => {
+  return async dispatch => {
     if (action instanceof ApiResource) {
       dispatch({
         type: actionTypes.PENDING,
@@ -20,23 +21,37 @@ function handleRequest(action) {
   }
 }
 
-function handleResponse(response, action) {
-  return dispatch => {
+function handleResponse(res, action) {
+  return async dispatch => {
     if (action instanceof ApiResource) {
+      const response = await res.json()
+
       dispatch({
         type: actionTypes.FULLFILLED,
-        payload: { response: response.json(), action },
+        payload: { response, action },
       })
     }
   }
 }
 
-function handleError(error, action) {
-  return dispatch => {
+function handleError(err, action) {
+  // @todo: need to consider different error types, may be http or may be type error etc
+  return async dispatch => {
     if (action instanceof ApiResource) {
+      let error
+
+      if (err instanceof window.Response) {
+        const body = await err.json()
+        error = { type: 'Response', status: err.status, body }
+      } else if (err instanceof HttpTimeoutError) {
+        error = { type: err.name, body: err.message }
+      } else {
+        throw err
+      }
+
       dispatch({
         type: actionTypes.FAILED,
-        payload: { error: error.json(), action },
+        payload: { error, action },
       })
     }
   }

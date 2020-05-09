@@ -19,7 +19,7 @@ const apiConfig = {
     request: (req) => (dispatch, getState) => dispatch({ type: 'API_REQUEST' }),
     response: (res) => (dispatch, getState) => dispatch({ type: 'API_RESPONSE' }),
     error: (err) => (dispatch, getState) => dispatch({ type: 'API_ERROR' }),
-    unhandledError: (err) => (dispatch, getState) => dispatch({ type: 'API_UNHANDLED_ERROR' }),,
+    unhandledError: (err) => (dispatch, getState) => dispatch({ type: 'API_UNHANDLED_ERROR' }),
   },
   defaults: {
     headers: {
